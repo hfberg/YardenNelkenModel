@@ -45,7 +45,9 @@ nev_cond_code{9} = 'FH';
 
 %% Parameters of the Model:
 % Number of columns:
-P = 21; %Hanna, reduce?
+P = 11; %Hanna, reduce? %reduced from 21 to 11 /HFB
+P_display = strcat('P (no of columns) is set to: ', num2str(P)) %Added this to keep track in commanf window /HFB
+
 
 % Number of frequencies to which the network is sensitive
 freq_stretch = 1; % Choose an integer >=1; this multiplies P to give M.
@@ -82,6 +84,8 @@ tau_rec_s = 0.300; % recovery time constant of sensory input synapses (in second
 
 U   = 0.5; % Portion of available fraction of resources that is utilized in response to an action potential %Hanna, change U here
 U_s = 0.7; % Same as U, only for the thalamo-cotical synapses that convey the sensory input
+U_display = strcat('U is set to: ', num2str(U)) %Added this to keep track in commanf window /HFB
+
 
 % Connection strengths:
 Jee = 6*factor/NE;    % exc2exc
@@ -107,8 +111,9 @@ ISI  = 0.3; % Inter-stimulus interval (in seconds)
 duration = 0.050; % Total duration of each stimulus (in seconds)
 ramp_dur = 0.005; % durations of the ramps at the beginning and end of each stimulus (in seconds)
 
-n_stim = 100; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce?
+n_stim = 100; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce? keeping at 100 /HFB
 %t_prot = n_stim*(duration + ISI); % Total time of the oddball protocol
+n_stim_display = strcat('001 n_stim is set to: ', num2str(n_stim)) %Added this to keep track in command window /HFB
 
 %% Localization of Sensory Input Effect:
 lambda_c = 5; %0.25; % Base value of the lambda_s localization parameter

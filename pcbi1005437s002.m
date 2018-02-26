@@ -2,6 +2,9 @@
 % TY_Loebel_Par_All_Prots_Nevo, according to the specified nev_cond
 tic
 n_stim    = 100; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce this? (see also other file for n_stim)
+n_stim_display = strcat('002 n_stim is set to: ', num2str(n_stim)) %Added this to keep track in command window /HFB
+
+
 if Probs_F2L < 0.1
     n_stim = 10/Probs_F2L;
 end
@@ -275,3 +278,5 @@ toc
 E_mean    = [];
 I_mean    = [];
 Spec_Temp = [];
+load splat %added an alarm sound so I can do other stuff than just wait around /HFB
+sound(y,Fs)

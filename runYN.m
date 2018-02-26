@@ -20,7 +20,8 @@ else
 load([foldnam '/TYLT_Prot_' term '_Network_' num2str(net_num) '_Par.mat'])
 end
 Freq_Diff = 2;
-Rec_Column = 11;
+Rec_Column = 6; %changed from 11 to 6 /HFB Hanna
+Rec_Column_display = strcat('Rec_Column is set to: ', num2str(Rec_Column)) %Added this to keep track in commanf window /HFB
 
 % If any the following arrays has more than one value, activate the
 % corresponding lines in pcbi.1005437.s002.m to ensure that files are saved
@@ -32,7 +33,7 @@ ISI_Arr = [0.3]; % Interval between stimuli (offset to onset)
 num_trials = 1; % If running more than one trial, activate the corresponding line in pcbi.1005437.s002.m to ensure that files are saved
 % with the appropriate suffix.
 
-for nevco = 1:7 % There are 7 basic conditions; 8 & 9 are Fixed conditions as in Yaron 2012)
+for nevco = 1:2 % There are 7 basic conditions; 8 & 9 are Fixed conditions as in Yaron 2012)
 for prob = 1:length(Probs_Arr)
 for tr = 1:num_trials
 for aa = 1:length(A_Arr)
