@@ -111,7 +111,7 @@ ISI  = 0.3; % Inter-stimulus interval (in seconds)
 duration = 0.050; % Total duration of each stimulus (in seconds)
 ramp_dur = 0.005; % durations of the ramps at the beginning and end of each stimulus (in seconds)
 
-n_stim = 100; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce? keeping at 100 /HFB
+n_stim = 5; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce? keeping at 100 /HFB
 %t_prot = n_stim*(duration + ISI); % Total time of the oddball protocol
 n_stim_display = strcat('001 n_stim is set to: ', num2str(n_stim)) %Added this to keep track in command window /HFB
 
@@ -251,6 +251,7 @@ i_step = (bg_high_I - bg_low_I)/(NI - 1);
 Inp_E  = ones(P,1)*(bg_low_E:e_step:bg_high_E); % These are the inputs to all the excitatory neurons, hence the P columns and NE rows
 Inp_I  = ones(P,1)*(bg_low_I:i_step:bg_high_I); % These are the inputs to all the inhibitory neurons
 
+
 tmax         = t_eq;% + t_prot*stim; % Maximum time that the simulation will reach (in seconds) 
 num_steps_eq = floor(tmax/dt); % Total number of steps in the simulation
 
@@ -297,12 +298,11 @@ for i = 1:floor(t_eq/dt)
     E_sum_1 = [E_sum(2:P); ring_net*E_sum(1)] + [ring_net*E_sum(P); E_sum(1:P-1)]; % Total input to each column from its nearest neighbors
     E_sum_2 = [E_sum(3:P); ring_net*E_sum(1:2)] + [ring_net*E_sum(P-1:P); E_sum(1:P-2)]; % Same, for 2nd-nearest neighbors.
     
-  
     % The gain each cell receives:
-    %Gain_E = bsxfun(@plus,Inp_E,(Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2));
-    Gain_E = (Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2); %added by HFB during noise reduction tests
-    %Gain_I = bsxfun(@plus,Inp_I,(Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2));
-    Gain_I = (Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2); %added by HFB during noise reduction tests
+    Gain_E = bsxfun(@plus,Inp_E,(Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2));
+    %Gain_E = (Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2); %added by HFB during noise reduction tests
+    Gain_I = bsxfun(@plus,Inp_I,(Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2));
+    %Gain_I = (Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2); %added by HFB during noise reduction tests
     %Gain_E = (Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2)*ones(1,NE)+Inp_E; 
     %Gain_I = (Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2)*ones(1,NI) + Inp_I;
     

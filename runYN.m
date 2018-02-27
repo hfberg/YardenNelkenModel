@@ -49,7 +49,7 @@ load([foldnam '/TYLT_Prot_' term '_Network_' num2str(net_num) '_Par.mat'])
 nev_cond = Conds{nevco};
 Probs_F2L = Probs_Arr(prob);
 A = A_Arr(aa);
-ISI = ISI_Arr(bb);
+ISI = ISI_Arr(bb)
 
 stim = 1;
 save_results = 1;
