@@ -33,7 +33,7 @@ ISI_Arr = [0.3]; % Interval between stimuli (offset to onset)
 num_trials = 1; % If running more than one trial, activate the corresponding line in pcbi.1005437.s002.m to ensure that files are saved
 % with the appropriate suffix.
 
-for nevco = 1:2 % There are 7 basic conditions; 8 & 9 are Fixed conditions as in Yaron 2012)
+for nevco = 1:2 % There are 7 basic conditions; 8 & 9 are Fixed conditions as in Yaron 2012) %Changsd to 1:2 from 1:7 /HFB±±
 for prob = 1:length(Probs_Arr)
 for tr = 1:num_trials
 for aa = 1:length(A_Arr)

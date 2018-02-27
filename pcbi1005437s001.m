@@ -203,16 +203,16 @@ if plot_TC %&& all_plots
 end
 
 %% Mixing the Responses of Neurons in Each Column
-if mix_tcs
+if mix_tcs %Mixing wich frequencies that cells "have as favourite" in a column
    h_unmixed = h; % Original h is saved for FRA finding in unmixed case.
    shif = freq_stretch; % The basic shift in BF.
-   placer1 = floor(NE/part_1f);
-   placer2 = placer1 + floor(NE/part_1b);
+   placer1 = floor(NE/part_1f); %placer1 is the fraction of cells sensitive to one type of frequency
+   placer2 = placer1 + floor(NE/part_1b); %Placer2 continues to fill the column with frequencies by adding the fraction of cells sensitive to frequency2 to the already ste no of cells sensitive to freq1
    placer3 = placer2 + floor(NE/part_2f);
    placer4 = placer3 + floor(NE/part_2b);
    
    for Q = 1:P % Doing an independent scramble for each column
-        Mixed   = randperm(NE);
+        Mixed   = randperm(NE); %gives a random vector of the integers 1 to NE
         
         h(Q,Mixed(1:placer1),:)              = h(Q,Mixed(1:placer1),[((M-shif+1):M) 1:(M-shif)]); % forward means to the right, i.e. increase in 3rd dimension
         h(Q,Mixed(1:placer1),((M-shif+1):M)) = ring_net*h(Q,Mixed(1:placer1),((M-shif+1):M));
@@ -243,6 +243,9 @@ end
 %% Initializing Variables:
 %t_prot    = n_stim*(duration + ISI) + 2*post_stim;
 
+%generating a matrix of uniformly distributed background noise that later
+%will be added to the input of each synapse during the whole tome  the
+%model is tested.
 e_step = (bg_high_E - bg_low_E)/(NE - 1); % *) How about input from a non-uniform (e.g. Gaussian) distribution?
 i_step = (bg_high_I - bg_low_I)/(NI - 1);
 Inp_E  = ones(P,1)*(bg_low_E:e_step:bg_high_E); % These are the inputs to all the excitatory neurons, hence the P columns and NE rows
@@ -278,7 +281,7 @@ E_sum_2 = EUx;
 
 %% The Dynamic Loop: Initial run to obtain steady-state and find initial values
 % First, the network is allowed to reach a steady-state with no sensory input. 
-% Tha activity of all neurons is assessed to determine which will be presnted with input.
+% The activity of all neurons is assessed to determine which will be presented with input.
 
 for i = 1:floor(t_eq/dt)
     % Pre-calculation for the inter-column exc2exc gain calculations:
@@ -293,11 +296,14 @@ for i = 1:floor(t_eq/dt)
     E_sum   = sum(E,2); % Total intra-column input in each column
     E_sum_1 = [E_sum(2:P); ring_net*E_sum(1)] + [ring_net*E_sum(P); E_sum(1:P-1)]; % Total input to each column from its nearest neighbors
     E_sum_2 = [E_sum(3:P); ring_net*E_sum(1:2)] + [ring_net*E_sum(P-1:P); E_sum(1:P-2)]; % Same, for 2nd-nearest neighbors.
-     
+    
+  
     % The gain each cell receives:
-    Gain_E = bsxfun(@plus,Inp_E,(Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2));
-    Gain_I = bsxfun(@plus,Inp_I,(Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2));
-    %Gain_E = (Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2)*ones(1,NE) + Inp_E;
+    %Gain_E = bsxfun(@plus,Inp_E,(Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2));
+    Gain_E = (Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2); %added by HFB during noise reduction tests
+    %Gain_I = bsxfun(@plus,Inp_I,(Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2));
+    Gain_I = (Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2); %added by HFB during noise reduction tests
+    %Gain_E = (Jee.*EUx + Jei.*IUy + Jee_1.*EUx_1 + Jee_2.*EUx_2)*ones(1,NE)+Inp_E; 
     %Gain_I = (Jie.*E_sum + Jii.*sum(I,2) + Jie_1.*E_sum_1 + Jie_2.*E_sum_2)*ones(1,NI) + Inp_I;
     
     % Implementing the non-linearity:
