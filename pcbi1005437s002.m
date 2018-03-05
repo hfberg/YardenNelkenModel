@@ -1,7 +1,7 @@
 % This code euns the network saved and brought to equilibrium by
 % TY_Loebel_Par_All_Prots_Nevo, according to the specified nev_cond
 tic
-n_stim    = 5; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce this? (see also other file for n_stim)
+n_stim    = 100; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce this? (see also other file for n_stim)
 n_stim_display = strcat('002 n_stim is set to: ', num2str(n_stim)) %Added this to keep track in command window /HFB
 
 
@@ -192,11 +192,21 @@ Gain_I = Gain_I_eq;
 E_mean = [E_mean zeros(P,num_steps - num_steps_eq)];
 %I_mean = [I_mean zeros(P,num_steps - num_steps_eq)];
 
+
+%% Creating and implementing a normal distribution for U.
+
+sigma_2 = 0.0; %choosing the spread of the distribution
+display_sigma_2 = strcat('sigma 2 is set to:', num2str(sigma_2)) 
+U_gauss_2 = normrnd(U_input,sigma_2,[1 1000000]);%generating an array containing normally 
+%distributed numbers surrounding the meadian set by U with a spread of sigma.
+
 %% Dynamic Loop
 if stim
 i = floor(t_eq/dt) + 1;
+%gauss_array_2 = zeros(1,151999);
 while i < num_steps
-    
+    U = datasample(U_gauss_2,1);
+    %gauss_array_2(i) = gauss_array_2(i) + U;
     % Pre-calculation for the inter-column exc2exc gain calculations:
     EUx    = diag(E*(U.*x)'); % Intra-column input from excitatory synapses, taking synaptic depression into account
     EUx_1 = [EUx(2:P) ; EUx(1)] + [EUx(P); EUx(1:P-1)]; % Excitatory input from neighboring column
@@ -243,12 +253,12 @@ while i < num_steps
         
     % Tracking activity (mean and perhaps overall and individual as well):
     E_mean(:,i) = mean(E,2);
-    %I_mean(:,i) = mean(I,2);
+    I_mean(:,i) = mean(I,2);
     
     i = i + 1;
 end
 end
-
+i
 %% Saving
 if save_results    
     

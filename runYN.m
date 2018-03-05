@@ -15,7 +15,7 @@ foldnam = [foldnam_gen '/net' num2str(net_num)];
 save([foldnam_gen '/TYLT_foldername.mat'],'foldnam')
 
 if Init
-run pcbi1005437s001.m
+run pcbi1005437s001_gaussian_U.m
 else
 load([foldnam '/TYLT_Prot_' term '_Network_' num2str(net_num) '_Par.mat'])
 end
@@ -54,7 +54,7 @@ ISI = ISI_Arr(bb)
 stim = 1;
 save_results = 1;
 foldnam_host = foldnam; % Here one can save a path to a different location where simulation results will be saved
-run pcbi1005437s002.m
+run pcbi1005437s002_gaussian_U.m
 end
 end
 end

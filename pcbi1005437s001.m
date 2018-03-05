@@ -82,10 +82,10 @@ tau_rec_s = 0.300; % recovery time constant of sensory input synapses (in second
 % *) This value was chosen since Eli says that LFP recovers fully after about 1 s (tau_rec_s ~ 0.3 s); there should be
 % articles about measurements in slices showing this recovery
 
-U   = 0.5; % Portion of available fraction of resources that is utilized in response to an action potential %Hanna, change U here
+U   = 0.45; % Portion of available fraction of resources that is utilized in response to an action potential %Hanna, change U here
 U_s = 0.7; % Same as U, only for the thalamo-cotical synapses that convey the sensory input
 U_display = strcat('U is set to: ', num2str(U)) %Added this to keep track in commanf window /HFB
-
+U_input = U;%added this so thet I can display in the plots which input U that were used./HFB
 
 % Connection strengths:
 Jee = 6*factor/NE;    % exc2exc
@@ -111,7 +111,7 @@ ISI  = 0.3; % Inter-stimulus interval (in seconds)
 duration = 0.050; % Total duration of each stimulus (in seconds)
 ramp_dur = 0.005; % durations of the ramps at the beginning and end of each stimulus (in seconds)
 
-n_stim = 5; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce? keeping at 100 /HFB
+n_stim = 100; % Total no. of stimuli (Best take a product of 10) %Hanna, reduce? keeping at 100 /HFB
 %t_prot = n_stim*(duration + ISI); % Total time of the oddball protocol
 n_stim_display = strcat('001 n_stim is set to: ', num2str(n_stim)) %Added this to keep track in command window /HFB
 
@@ -244,7 +244,7 @@ end
 %t_prot    = n_stim*(duration + ISI) + 2*post_stim;
 
 %generating a matrix of uniformly distributed background noise that later
-%will be added to the input of each synapse during the whole tome  the
+%will be added to the input of each synapse during the whole time  the
 %model is tested.
 e_step = (bg_high_E - bg_low_E)/(NE - 1); % *) How about input from a non-uniform (e.g. Gaussian) distribution?
 i_step = (bg_high_I - bg_low_I)/(NI - 1);
@@ -270,7 +270,7 @@ Gain_I = zeros(P,NI); % The change in I in a certain time-step
 
 E_act  = zeros(P,NE,floor(t_eq/dt)); % Activity of all excitatory neurons during the time allowed for reaching equilibrium, for identification of the active neurons.
 E_mean = zeros(P,num_steps_eq); % Mean excitatory neuron activities in all columns, in all time-steps (in Hz)
-%I_mean = E_mean; % Mean inhibitory neuron activities in all columns, in all time-steps (in Hz)
+I_mean = E_mean; % Mean inhibitory neuron activities in all columns, in all time-steps (in Hz)
 
 EUx     = zeros(P,1);
 EUx_1   = EUx;
@@ -280,11 +280,23 @@ E_sum   = EUx;
 E_sum_1 = EUx;
 E_sum_2 = EUx;
 
+%% Creating and implementing a normal distribution for U.
+
+sigma = 0.03; %choosing the spread of the distribution
+display_sigma = strcat('sigma is set to:', num2str(sigma)) 
+U_gauss = normrnd(U,sigma,[1 1000000]);%generating an array containing normally 
+%distributed numbers surrounding the meadian set by U with a spread of sigma.
+
+
 %% The Dynamic Loop: Initial run to obtain steady-state and find initial values
 % First, the network is allowed to reach a steady-state with no sensory input. 
 % The activity of all neurons is assessed to determine which will be presented with input.
-
+gauss_array = zeros(1,50000);
 for i = 1:floor(t_eq/dt)
+ 
+    U = datasample(U_gauss,1); %for each iteration, datasample chooses with uniform distribution a new U 
+    %from the array U_gauss containing normally distributed numbers.
+    gauss_array(i) = gauss_array(i) + U;
     % Pre-calculation for the inter-column exc2exc gain calculations:
     EUx    = diag(E*(U.*x)'); % Intra-column input from excitatory synapses, taking synaptic depression into account
     EUx_1 = [EUx(2:P) ; ring_net*EUx(1)] + [ring_net*EUx(P); EUx(1:P-1)]; % Excitatory input from neighboring column
@@ -321,7 +333,7 @@ for i = 1:floor(t_eq/dt)
 
     E_act(:,:,i)    = E; % Tracking the activity of all neurons
     E_mean(:,i)   = mean(E,2); % Tracking mean excitatory activity
-    %I_mean(:,i)   = mean(I,2); % Tracking mean inhibitory activity
+    I_mean(:,i)   = mean(I,2); % Tracking mean inhibitory activity
 end
 
 % Recording equilibrium conditions:
