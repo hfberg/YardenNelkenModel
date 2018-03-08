@@ -197,6 +197,12 @@ I_mean = [I_mean zeros(P,num_steps - num_steps_eq)];
 if stim
 i = floor(t_eq/dt) + 1;
 
+E_add_array_RC = zeros(1,num_steps); %initiating an array to save the sum of synapse activity for each timestep./HFB
+E_add_array_RC_m1 = E_add_array_RC; %initiating arrays for summing in columns surrounding Rec_Col. /HFB
+E_add_array_RC_p1 = E_add_array_RC;
+E_add_array_RC_m2 = E_add_array_RC;
+E_add_array_RC_p2 = E_add_array_RC;
+
 while i < num_steps
     U = datasample(U_gauss,1); %choosing a normally distributed U from the 
     %same population of U:s used in the dynamic loop in pcbi001.m /HFB
@@ -249,6 +255,24 @@ while i < num_steps
     % Tracking activity (mean and perhaps overall and individual as well):
     E_mean(:,i) = mean(E,2);
     I_mean(:,i) = mean(I,2);
+    
+    %summing the activity of all synapses in one column /HFB
+    E_add = sum(E(Rec_Column,:)); %adds the activity of all 100 neurons in rec_column at time i. /HFB
+    E_add_array_RC(i) = E_add_array_RC(i) + E_add; %creates an array of the sum of all synapses at each timestep /HFB
+    
+    %same thing but for the surrounding columns +/- 1 from Rec_col
+    E_add_m1 = sum(E(Rec_Column-1,:)); 
+    E_add_array_RC_m1(i) = E_add_array_RC_m1(i) + E_add_m1;
+    
+    E_add_p1 = sum(E(Rec_Column+1,:));
+    E_add_array_RC_p1(i) = E_add_array_RC_p1(i) + E_add_p1;
+    
+    % for +/- 2 from Rec_col
+    E_add_m2 = sum(E(Rec_Column-2,:)); %same thing but for the surrounding columns
+    E_add_array_RC_m2(i) = E_add_array_RC_m2(i) + E_add_m2;
+    
+    E_add_p2 = sum(E(Rec_Column+2,:));
+    E_add_array_RC_p2(i) = E_add_array_RC_p2(i) + E_add_p2;
     
     i = i + 1;
 end

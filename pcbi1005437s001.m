@@ -430,7 +430,7 @@ end
 h(repmat(~Active_Neurons,[1 1 M])) = 0; % Non-active neurons do not get sensory input. This is achieved by canceling their tuning curves.
 
 %% Saving
-E_act_plot = E_act;
+
 E_act = [];% just to save memory
 
 filename = [foldnam '/TYLT_Prot_' term '_Network_' num2str(net_num) '_Par.mat'];
