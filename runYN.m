@@ -15,13 +15,13 @@ foldnam = [foldnam_gen '/net' num2str(net_num)];
 save([foldnam_gen '/TYLT_foldername.mat'],'foldnam')
 
 if Init
-run pcbi1005437s001_gaussian_U.m
+run pcbi1005437s001.m
 else
 load([foldnam '/TYLT_Prot_' term '_Network_' num2str(net_num) '_Par.mat'])
 end
 Freq_Diff = 2;
 Rec_Column = 6; %changed from 11 to 6 /HFB Hanna
-Rec_Column_display = strcat('Rec_Column is set to: ', num2str(Rec_Column)) %Added this to keep track in commanf window /HFB
+%Rec_Column_display = strcat('Rec_Column is set to: ', num2str(Rec_Column)) %Added this to keep track in commanf window /HFB
 
 % If any the following arrays has more than one value, activate the
 % corresponding lines in pcbi.1005437.s002.m to ensure that files are saved
@@ -49,12 +49,12 @@ load([foldnam '/TYLT_Prot_' term '_Network_' num2str(net_num) '_Par.mat'])
 nev_cond = Conds{nevco};
 Probs_F2L = Probs_Arr(prob);
 A = A_Arr(aa);
-ISI = ISI_Arr(bb)
+ISI = ISI_Arr(bb);
 
 stim = 1;
 save_results = 1;
 foldnam_host = foldnam; % Here one can save a path to a different location where simulation results will be saved
-run pcbi1005437s002_gaussian_U.m
+run pcbi1005437s002.m
 end
 end
 end
